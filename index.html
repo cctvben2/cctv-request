@@ -1,9 +1,163 @@
 <!DOCTYPE html>
-<html>
-<body style="margin:0; padding:0;">
-  <iframe 
-    src="https://script.google.com/macros/s/AKfycbwbu4KkgeXP1yNjFBHJujXMf7uvUYBOMWglMkkBRQi8NY4Ls35RbaDJY84Q-IytAYA/exec"
-    style="width: 100%; height: 1200px; border: none;">
-  </iframe>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบฟอร์มขอดูกล้องวงจรปิด</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;700&display=swap');
+        :root { font-family: 'Noto Sans Thai', sans-serif; }
+        .container { max-width: 640px; }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-4 flex items-center justify-center">
+
+    <div class="container bg-white p-6 md:p-10 rounded-xl shadow-lg w-full">
+
+        <div class="flex justify-center mb-6">
+            <img src="https://triampreng.ac.th/images/sampledata/parks/bb/images.png"
+                 class="h-40 max-h-44 w-auto object-contain"
+                 alt="School Logo">
+        </div>
+
+        <h1 class="text-3xl font-bold text-center text-blue-600">
+            แบบฟอร์มขอดูกล้องวงจรปิด
+        </h1>
+
+        <h3 class="text-2xl font-bold text-center text-blue-600 mb-6 border-b pb-3">
+            โรงเรียนเบญจมราชรังสฤษฎิ์ ๒
+        </h3>
+
+        <form id="cctvRequestForm" class="space-y-6">
+
+            <!-- วันที่ต้องการดู -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">วันที่ต้องการดู <span class="text-red-500">*</span></label>
+                <input type="date" id="requestDate" required class="input">
+            </div>
+
+            <!-- เวลา -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">เริ่มต้น <span class="text-red-500">*</span></label>
+                    <input type="time" id="startTime" required class="input">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">สิ้นสุด <span class="text-red-500">*</span></label>
+                    <input type="time" id="endTime" required class="input">
+                </div>
+            </div>
+
+            <!-- ตำแหน่งกล้อง -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">ตำแหน่งกล้อง <span class="text-red-500">*</span></label>
+                <input type="text" id="cameraLocation" required
+                       placeholder="เช่น อาคาร 1 ชั้น 1"
+                       class="input">
+            </div>
+
+            <!-- เหตุผล -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">เหตุผล <span class="text-red-500">*</span></label>
+                <textarea id="reason" rows="3" required
+                          placeholder="ระบุเหตุการณ์โดยละเอียด"
+                          class="input"></textarea>
+            </div>
+
+            <!-- ข้อมูลผู้ขอ -->
+            <div class="pt-4 border-t space-y-4">
+                <h2 class="text-lg font-semibold">ข้อมูลผู้ขอ</h2>
+
+                <input id="requesterName" placeholder="ชื่อ-นามสกุล" required class="input">
+                <input id="contactPhone" placeholder="08XXXXXXXX" pattern="[0-9]{10}" required class="input">
+                <input id="contactEmail" type="email" placeholder="email@example.com" required class="input">
+                <input id="requesterClass" placeholder="ม.5/2 หรือ หน่วยงาน" required class="input">
+
+                <div>
+                    <label class="block font-medium">ประเภทผู้ขอ <span class="text-red-500">*</span></label>
+                    <label><input type="radio" name="type" value="ครู/บุคลากร" required> ครู/บุคลากร</label>
+                    <label class="ml-4"><input type="radio" name="type" value="นักเรียน" required> นักเรียน</label>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-lg">
+                บันทึกคำขอ
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // ⭐⭐⭐ ใส่ URL Web App ของคุณตรงนี้ ⭐⭐⭐
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwbu4KkgeXP1yNjFBHJujXMf7uvUYBOMWglMkkBRQi8NY4Ls35RbaDJY84Q-IytAYA/exec";
+
+        const form = document.getElementById("cctvRequestForm");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            Swal.fire({
+                title: "กำลังส่งคำขอ...",
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            const formData = {
+                requestDate: requestDate.value,
+                startTime: startTime.value,
+                endTime: endTime.value,
+                cameraLocation: cameraLocation.value,
+                reason: reason.value,
+                requesterName: requesterName.value,
+                contactPhone: contactPhone.value,
+                contactEmail: contactEmail.value,
+                requesterClass: requesterClass.value,
+                userType: document.querySelector("input[name='type']:checked")?.value,
+                status: "รอพิจารณา"
+            };
+
+            try {
+                const res = await fetch(WEB_APP_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ action: "submitRequest", data: formData })
+                });
+
+                const result = await res.json();
+
+                Swal.close();
+
+                if (result.success) {
+                    Swal.fire("สำเร็จ!", "บันทึกข้อมูลเรียบร้อย", "success");
+                    form.reset();
+                } else {
+                    Swal.fire("ผิดพลาด!", result.error ?? "บันทึกไม่สำเร็จ", "error");
+                }
+
+            } catch (err) {
+                Swal.close();
+                Swal.fire("ผิดพลาด!", "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้", "error");
+            }
+        });
+    </script>
+
+    <style>
+        .input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-top: 4px;
+            border-radius: 6px;
+        }
+    </style>
+
 </body>
 </html>
+
