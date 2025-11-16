@@ -5,20 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>แบบฟอร์มขอดูกล้องวงจรปิด</title>
 
-  <!-- TailwindCSS -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;700&display=swap');
-    :root {
-      font-family: 'Noto Sans Thai', sans-serif;
-    }
-    .container {
-      max-width: 640px;
-    }
+    :root { font-family: 'Noto Sans Thai', sans-serif; }
+    .container { max-width: 640px; }
   </style>
 </head>
 
@@ -41,168 +36,199 @@
     </h3>
 
     <p class="text-center text-sm text-gray-500 mb-8">
-      สามารถขอดูย้อนหลังได้ไม่เกิน 7 วันนับจากวันเกิดเหตุ
+      สามารถขอดูย้อนหลังได้ไม่เกิน 7 วันนับจากวันที่เกิดเหตุ
     </p>
 
-    <form id="cctvForm" class="space-y-6">
+    <form id="cctvRequestForm" class="space-y-6">
 
       <!-- วันที่ต้องการดู -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">วันที่ต้องการดู *</label>
-        <input type="date" id="requestDate" required
-               class="mt-1 block w-full px-3 py-2 border rounded-md">
+        <label for="requestDate" class="block text-sm font-medium text-gray-700">
+          วันที่ต้องการดู <span class="text-red-500">*</span>
+        </label>
+        <input type="date" id="requestDate" name="requestDate" required
+               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
       </div>
 
-      <!-- เวลา -->
+      <!-- ช่วงเวลา -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700">เวลาเริ่ม *</label>
-          <input type="time" id="startTime" required
-                 class="mt-1 block w-full px-3 py-2 border rounded-md">
+          <label for="startTime" class="block text-sm font-medium text-gray-700">
+            ช่วงเวลาเริ่มต้น <span class="text-red-500">*</span>
+          </label>
+          <input type="time" id="startTime" name="startTime" required
+                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700">เวลาสิ้นสุด *</label>
-          <input type="time" id="endTime" required
-                 class="mt-1 block w-full px-3 py-2 border rounded-md">
+          <label for="endTime" class="block text-sm font-medium text-gray-700">
+            ช่วงเวลาสิ้นสุด <span class="text-red-500">*</span>
+          </label>
+          <input type="time" id="endTime" name="endTime" required
+                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
         </div>
       </div>
 
       <!-- ตำแหน่งกล้อง -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">ตำแหน่งกล้อง *</label>
-        <input type="text" id="cameraLocation" required
-               placeholder="เช่น อาคาร 1 ชั้น 1 หน้า 112"
-               class="mt-1 block w-full px-3 py-2 border rounded-md">
+        <label for="cameraLocation" class="block text-sm font-medium text-gray-700">
+          ตำแหน่งกล้อง/บริเวณของกล้อง <span class="text-red-500">*</span>
+        </label>
+        <input type="text" id="cameraLocation" name="cameraLocation" required
+               placeholder="เช่น อาคาร 1 ชั้น 1 ทางเข้า ห้อง 112"
+               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
       </div>
 
       <!-- เหตุผล -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">เหตุผลในการขอดู *</label>
-        <textarea id="reason" rows="3" required
-                  class="mt-1 block w-full px-3 py-2 border rounded-md"
-                  placeholder="ระบุเหตุการณ์โดยละเอียด เช่น ..."></textarea>
+        <label for="reason" class="block text-sm font-medium text-gray-700">
+          เหตุผลในการขอดู <span class="text-red-500">*</span>
+        </label>
+        <textarea id="reason" name="reason" rows="3" required
+                  placeholder="ระบุเหตุการณ์โดยละเอียด เช่น ทรัพย์สินสูญหายเมื่อ..., ลักษณะของทรัพย์สิน, ลักษณะผู้ต้องสงสัย ฯลฯ"
+                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"></textarea>
       </div>
 
       <!-- ข้อมูลผู้ขอ -->
       <div class="space-y-4 pt-3 border-t border-gray-200">
-        <h2 class="text-lg font-semibold">ข้อมูลผู้ขอ</h2>
+        <h2 class="text-lg font-semibold text-gray-800">ข้อมูลผู้ขอ</h2>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">ชื่อ-นามสกุล *</label>
-          <input type="text" id="requesterName" required
-                 class="mt-1 block w-full px-3 py-2 border rounded-md">
+          <label for="requesterName" class="block text-sm font-medium text-gray-700">
+            ชื่อ-นามสกุลผู้ขอ <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="requesterName" name="requesterName" required
+                 placeholder="ชื่อ-นามสกุล"
+                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">เบอร์โทรศัพท์ *</label>
-          <input type="tel" id="contactPhone" required
-                 pattern="[0-9]{10}" placeholder="08XXXXXXXX"
-                 class="mt-1 block w-full px-3 py-2 border rounded-md">
+          <label for="contactPhone" class="block text-sm font-medium text-gray-700">
+            เบอร์โทรศัพท์ติดต่อ <span class="text-red-500">*</span>
+          </label>
+          <input type="tel" id="contactPhone" name="contactPhone" required
+                 placeholder="08XXXXXXXX"
+                 pattern="[0-9]{10}" title="กรุณากรอกเบอร์โทรศัพท์ 10 หลัก"
+                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">อีเมล *</label>
-          <input type="email" id="contactEmail" required
+          <label for="contactEmail" class="block text-sm font-medium text-gray-700">
+            อีเมลติดต่อกลับ <span class="text-red-500">*</span>
+          </label>
+          <input type="email" id="contactEmail" name="contactEmail" required
                  placeholder="email@example.com"
-                 class="mt-1 block w-full px-3 py-2 border rounded-md">
+                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">ชั้น/ระดับ/หน่วยงาน *</label>
-          <input type="text" id="requesterClass" required
-                 placeholder="เช่น ม.5/2 หรือ งานปกครอง"
-                 class="mt-1 block w-full px-3 py-2 border rounded-md">
+          <label for="requesterClass" class="block text-sm font-medium text-gray-700">
+            ชั้น/ระดับหรือหน่วยงาน <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="requesterClass" name="requesterClass" required
+                 placeholder="เช่น ม.5/2, งานปกครอง"
+                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">ประเภทผู้ขอ *</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            ประเภทผู้ขอ <span class="text-red-500">*</span>
+          </label>
           <div class="flex space-x-6">
-            <label class="flex items-center">
+            <label class="inline-flex items-center">
               <input type="radio" name="userType" value="ครู/บุคลากร" required>
-              <span class="ml-2">ครู/บุคลากร</span>
+              <span class="ml-2 text-gray-700">ครู/บุคลากร</span>
             </label>
-            <label class="flex items-center">
+            <label class="inline-flex items-center">
               <input type="radio" name="userType" value="นักเรียน" required>
-              <span class="ml-2">นักเรียน</span>
+              <span class="ml-2 text-gray-700">นักเรียน</span>
             </label>
           </div>
         </div>
       </div>
 
       <!-- ปุ่มส่ง -->
-      <button type="submit"
-              class="w-full py-3 bg-blue-600 text-white rounded-md text-lg hover:bg-blue-700">
-        บันทึกคำขอ
-      </button>
-
+      <div class="pt-4">
+        <button type="submit" id="submitButton"
+                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          บันทึกคำขอ
+        </button>
+      </div>
     </form>
   </div>
 
   <script>
+    const form = document.getElementById('cctvRequestForm');
 
-    // ⭐ เปลี่ยนเป็น URL Web App ของคุณ
-    const WEB_APP_URL =
-      "https://script.google.com/macros/s/AKfycbwbu4KkgeXP1yNjFBHJujXMf7uvUYBOMWglMkkBRQi8NY4Ls35RbaDJY84Q-IytAYA/exec";
-
-    const form = document.getElementById("cctvForm");
-
-    form.addEventListener("submit", async function (event) {
-      event.preventDefault();
-
+    function showLoading() {
       Swal.fire({
-        title: "กำลังบันทึกข้อมูล...",
+        title: 'กำลังบันทึกข้อมูล...',
+        text: 'กรุณารอสักครู่',
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading()
       });
+    }
 
-      const requestData = {
-        request_date: document.getElementById("requestDate").value,
-        start_time: document.getElementById("startTime").value,
-        end_time: document.getElementById("endTime").value,
-        camera_location: document.getElementById("cameraLocation").value,
-        reason: document.getElementById("reason").value,
-        requester_name: document.getElementById("requesterName").value,
-        phone: document.getElementById("contactPhone").value,
-        email: document.getElementById("contactEmail").value,
-        floor: document.getElementById("requesterClass").value,
-        user_type: document.querySelector("input[name='userType']:checked").value,
-        status: "รอพิจารณา"
+    function showSuccess(message) {
+      Swal.fire({
+        icon: 'success',
+        title: 'สำเร็จ!',
+        text: message || 'บันทึกข้อมูลคำขอเรียบร้อยแล้ว',
+        confirmButtonText: 'ตกลง'
+      }).then(() => {
+        form.reset();
+      });
+    }
+
+    function showError(message) {
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด!',
+        text: message || 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+        confirmButtonText: 'ตกลง'
+      });
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      // รวบรวมข้อมูลจากฟอร์ม
+      const formData = {
+        requestDate: document.getElementById('requestDate').value,
+        startTime: document.getElementById('startTime').value,
+        endTime: document.getElementById('endTime').value,
+        cameraLocation: document.getElementById('cameraLocation').value,
+        reason: document.getElementById('reason').value,
+        requesterName: document.getElementById('requesterName').value,
+        contactPhone: document.getElementById('contactPhone').value,
+        contactEmail: document.getElementById('contactEmail').value,
+        requesterClass: document.getElementById('requesterClass').value,
+        userType: document.querySelector("input[name='userType']:checked")?.value
       };
 
-      try {
-
-        const res = await fetch(WEB_APP_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "submitRequest",
-            data: requestData
-          })
-        });
-
-        const text = await res.text();
-        console.log("Response:", text);
-
-        let json;
-        try { json = JSON.parse(text); }
-        catch { json = { success: false, error: text }; }
-
-        Swal.close();
-
-        if (json.success) {
-          Swal.fire("สำเร็จ", json.message, "success");
-          form.reset();
-        } else {
-          Swal.fire("ผิดพลาด!", json.error, "error");
-        }
-
-      } catch (error) {
-        Swal.close();
-        Swal.fire("ผิดพลาด!", "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้", "error");
+      if (!formData.userType) {
+        showError('กรุณาเลือกประเภทผู้ขอ');
+        return;
       }
+
+      showLoading();
+
+      // เรียกฟังก์ชันใน Code.gs ผ่าน google.script.run
+      google.script.run
+        .withSuccessHandler(function (res) {
+          Swal.close();
+          if (res && res.success) {
+            showSuccess(res.message);
+          } else {
+            showError(res && res.error ? res.error : 'ไม่สามารถบันทึกข้อมูลได้');
+          }
+        })
+        .withFailureHandler(function (err) {
+          Swal.close();
+          console.error('Apps Script error:', err);
+          showError('เกิดข้อผิดพลาดจากระบบ: ' + (err.message || err));
+        })
+        .processCCTVRequest(formData);
     });
-
   </script>
-
 </body>
 </html>
