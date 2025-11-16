@@ -159,76 +159,79 @@
     </form>
   </div>
 
-  <script>
-    // ⭐ ใส่ URL Web App ของ Google Apps Script ที่ deploy แล้ว (ลงท้ายด้วย /exec)
-    const WEB_APP_URL =  "https://script.google.com/macros/s/AKfycbwbu4KkgeXP1yNjFBHJujXMf7uvUYBOMWglMkkBRQi8NY4Ls35RbaDJY84Q-IytAYA/exec";
+<script>
+  // ⭐ ใส่ URL Web App ของ Google Apps Script ที่ deploy แล้ว (ลงท้ายด้วย /exec)
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwbu4KkgeXP1yNjFBHJujXMf7uvUYBOMWglMkkBRQi8NY4Ls35RbaDJY84Q-IytAYA/exec";
 
+  const form = document.getElementById("cctvForm");
 
-    const form = document.getElementById("cctvForm");
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-    form.addEventListener("submit", async function (event) {
-      event.preventDefault();
+    Swal.fire({
+      title: "กำลังบันทึกข้อมูล...",
+      text: "กรุณารอสักครู่",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
 
-      Swal.fire({
-        title: "กำลังบันทึกข้อมูล...",
-        text: "กรุณารอสักครู่",
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
+    const requestData = {
+      request_date:     document.getElementById("requestDate").value,
+      start_time:       document.getElementById("startTime").value,
+      end_time:         document.getElementById("endTime").value,
+      camera_location:  document.getElementById("cameraLocation").value,
+      reason:           document.getElementById("reason").value,
+      requester_name:   document.getElementById("requesterName").value,
+      phone:            document.getElementById("contactPhone").value,
+      email:            document.getElementById("contactEmail").value,
+      floor:            document.getElementById("requesterClass").value,
+      user_type:        document.querySelector("input[name='userType']:checked").value,
+      status:           "รอพิจารณา"
+    };
+
+    console.log("ส่งข้อมูลไป Apps Script:", requestData);
+
+    try {
+      const res = await fetch(WEB_APP_URL, {
+        method: "POST",
+        // ใช้ text/plain เพื่อลดปัญหา preflight / CORS
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "submitRequest",
+          data: requestData
+        })
       });
 
-      const requestData = {
-        request_date: document.getElementById("requestDate").value,
-        start_time:   document.getElementById("startTime").value,
-        end_time:     document.getElementById("endTime").value,
-        camera_location: document.getElementById("cameraLocation").value,
-        reason:          document.getElementById("reason").value,
-        requester_name:  document.getElementById("requesterName").value,
-        phone:           document.getElementById("contactPhone").value,
-        email:           document.getElementById("contactEmail").value,
-        floor:           document.getElementById("requesterClass").value,
-        user_type:       document.querySelector("input[name='userType']:checked").value,
-        status:          "รอพิจารณา"
-      };
+      const text = await res.text();
+      console.log("ตอบกลับจาก Apps Script (ดิบ):", text);
 
+      let json;
       try {
-        const res = await fetch(WEB_APP_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "submitRequest",
-            data: requestData
-          })
-        });
-
-        const text = await res.text();
-        console.log("Response:", text);
-
-        let json;
-        try {
-          json = JSON.parse(text);
-        } catch (e) {
-          json = { success: false, error: text };
-        }
-
-        Swal.close();
-
-        if (json.success) {
-          Swal.fire("สำเร็จ", json.message || "บันทึกข้อมูลเรียบร้อยแล้ว", "success");
-          form.reset();
-        } else {
-          Swal.fire("ผิดพลาด!", json.error || "ไม่สามารถบันทึกข้อมูลได้", "error");
-        }
-
-      } catch (error) {
-        Swal.close();
-        console.error(error);
-        Swal.fire("ผิดพลาด!", "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้", "error");
+        json = JSON.parse(text);
+      } catch (e) {
+        json = { success: false, error: "Invalid JSON: " + text };
       }
-    });
-  </script>
+
+      Swal.close();
+
+      if (json.success) {
+        Swal.fire("สำเร็จ", json.message || "บันทึกข้อมูลเรียบร้อยแล้ว", "success");
+        form.reset();
+      } else {
+        Swal.fire("ผิดพลาด!", json.error || "ไม่สามารถบันทึกข้อมูลได้", "error");
+      }
+
+    } catch (error) {
+      Swal.close();
+      console.error("Fetch error:", error);
+      Swal.fire("ผิดพลาด!", "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้: " + (error.message || error), "error");
+    }
+  });
+</script>
 
 </body>
 </html>
+
 
 
 
